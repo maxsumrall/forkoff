@@ -44,8 +44,8 @@ async function forkoff(pi: ExtensionAPI, rawArgs: string, ctx: ExtensionCommandC
 
 	const leafId = ctx.sessionManager.getLeafId();
 	const branchFile = leafId
-		? ctx.sessionManager.createBranchedSession(leafId)
-		: SessionManager.create(ctx.cwd, ctx.sessionManager.getSessionDir(), { parentSession: sessionFile }).getSessionFile();
+		? createBranchedSession(ctx, sessionFile, leafId)
+		: createEmptyFork(ctx, sessionFile);
 
 	if (!branchFile) {
 		ctx.ui.notify("Could not create forked session", "error");
@@ -66,6 +66,32 @@ async function forkoff(pi: ExtensionAPI, rawArgs: string, ctx: ExtensionCommandC
 	}
 
 	ctx.ui.notify(`Forked session opened in ${target}`, "info");
+}
+
+function createBranchedSession(ctx: ExtensionCommandContext, sessionFile: string, leafId: string): string | undefined {
+	try {
+		const branchFile = ctx.sessionManager.createBranchedSession(leafId);
+		ctx.sessionManager.appendCustomMessageEntry(
+			"forkoff",
+			`This session is an independent fork of parent session ${sessionFile} at entry ${leafId}.`,
+			false,
+			{ parentSession: sessionFile, forkedFromEntryId: leafId },
+		);
+		return branchFile;
+	} finally {
+		ctx.sessionManager.setSessionFile(sessionFile);
+	}
+}
+
+function createEmptyFork(ctx: ExtensionCommandContext, sessionFile: string): string | undefined {
+	const branch = SessionManager.create(ctx.cwd, ctx.sessionManager.getSessionDir(), { parentSession: sessionFile });
+	branch.appendCustomMessageEntry(
+		"forkoff",
+		`This session is an independent fork of parent session ${sessionFile}.`,
+		false,
+		{ parentSession: sessionFile },
+	);
+	return branch.getSessionFile();
 }
 
 function parseArgs(rawArgs: string): ParsedArgs {
