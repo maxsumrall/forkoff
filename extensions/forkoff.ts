@@ -134,12 +134,13 @@ function itermScript(command: string): string {
 	return `tell application "iTerm2"
 	activate
 	if (count of windows) = 0 then
-		create window with default profile command ${value}
+		create window with default profile
 	else
 		tell current window
-			create tab with default profile command ${value}
+			create tab with default profile
 		end tell
 	end if
+	tell current session of current window to write text ${value}
 end tell`;
 }
 
