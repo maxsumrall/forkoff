@@ -44,7 +44,7 @@ async function forkoff(pi: ExtensionAPI, rawArgs: string, ctx: ExtensionCommandC
 
 	const leafId = ctx.sessionManager.getLeafId();
 	const branchFile = leafId
-		? SessionManager.open(sessionFile, ctx.sessionManager.getSessionDir(), ctx.cwd).createBranchedSession(leafId)
+		? ctx.sessionManager.createBranchedSession(leafId)
 		: SessionManager.create(ctx.cwd, ctx.sessionManager.getSessionDir(), { parentSession: sessionFile }).getSessionFile();
 
 	if (!branchFile) {
