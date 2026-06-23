@@ -6,6 +6,10 @@
 
 A Pi extension that opens a cloned conversation branch in a new terminal tab, so the main session stays usable while the fork goes its own way.
 
+<p align="center">
+  <img src="assets/how-it-works.png" alt="forkoff workflow diagram" width="100%">
+</p>
+
 ## Install
 
 ```sh
