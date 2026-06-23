@@ -8,6 +8,8 @@ type ParsedArgs = {
 };
 
 const editorTextEnv = "PI_FORKOFF_EDITOR_TEXT_B64";
+const forkNotice =
+	"This session was opened by forkoff as an independent fork of another Pi session. Continue from the inherited context, but treat this branch as separate from its parent.";
 
 export default function (pi: ExtensionAPI) {
 	pi.on("session_start", (_event, ctx) => {
@@ -71,12 +73,10 @@ async function forkoff(pi: ExtensionAPI, rawArgs: string, ctx: ExtensionCommandC
 function createBranchedSession(ctx: ExtensionCommandContext, sessionFile: string, leafId: string): string | undefined {
 	try {
 		const branchFile = ctx.sessionManager.createBranchedSession(leafId);
-		ctx.sessionManager.appendCustomMessageEntry(
-			"forkoff",
-			`This session is an independent fork of parent session ${sessionFile} at entry ${leafId}.`,
-			false,
-			{ parentSession: sessionFile, forkedFromEntryId: leafId },
-		);
+		ctx.sessionManager.appendCustomMessageEntry("forkoff", forkNotice, false, {
+			parentSession: sessionFile,
+			forkedFromEntryId: leafId,
+		});
 		return branchFile;
 	} finally {
 		ctx.sessionManager.setSessionFile(sessionFile);
@@ -85,12 +85,7 @@ function createBranchedSession(ctx: ExtensionCommandContext, sessionFile: string
 
 function createEmptyFork(ctx: ExtensionCommandContext, sessionFile: string): string | undefined {
 	const branch = SessionManager.create(ctx.cwd, ctx.sessionManager.getSessionDir(), { parentSession: sessionFile });
-	branch.appendCustomMessageEntry(
-		"forkoff",
-		`This session is an independent fork of parent session ${sessionFile}.`,
-		false,
-		{ parentSession: sessionFile },
-	);
+	branch.appendCustomMessageEntry("forkoff", forkNotice, false, { parentSession: sessionFile });
 	return branch.getSessionFile();
 }
 
