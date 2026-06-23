@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/header.png" alt="forkoff branching terminal sessions" width="100%">
+</p>
+
 # forkoff
 
 A Pi extension that opens a cloned conversation branch in a new terminal tab, so the main session stays usable while the fork goes its own way.
