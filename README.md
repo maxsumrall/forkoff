@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/header.png" alt="forkoff branching terminal sessions" width="100%">
+  <img src="assets/header.svg" alt="forkoff" width="100%">
 </p>
 
 # forkoff
